@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#define FIRST_FIT   1
+#define BEST_FIT    2
 static Header base;
 
 static Header * freep = NULL;
@@ -19,7 +21,6 @@ void * my_malloc(size_t nbytes);
 void my_free(void * ptr);
 void my_mallopt(int	policy);
 void my_free(void * ap);
-void * realloc(void * ptr, size_t size);
 void my_mallinfo();
 
 
@@ -35,10 +36,10 @@ void * my_malloc(size_t nbytes) {
         return NULL;
     }
 
-	if (current_policy == 1) {
+	if (current_policy == FIRST_FIT) {
 		return malloc_first(nbytes);
 	
-	} else if (current_policy == 2) {
+	} else if (current_policy == BEST_FIT) {
 		return malloc_best(nbytes);
 	
 	} else {
@@ -123,56 +124,6 @@ void my_free(void * ap) {
 	}
 	
     freep = p;
-}
-
-/**
- * Changes size of the memory block and returns address to the new one.
- */
-void * realloc(void * ptr, size_t size) {
-	
-    Header *bp, *p;
-
-    /*
-     * Take care of some simple, basic cases like when the given pointer is
-     * NULL or the size is non-positive.
-     */
-
-    if (ptr == NULL) {
-        return malloc(size);
-    } else if (size <= 0) {
-        free(ptr);
-        return NULL;
-    }
-
-    bp = (Header*) ptr - 1;
-    unsigned int numbytes = sizeof(Header) * (bp->s.size - 1);
-
-	// Does not resize if not needed.
-    if (size == numbytes) {
-        return ptr;
-    }
-
-
-    /*
-     * Simply allocate as much memory as the new size and copy the old data
-     * into the new place. Then free the previously allocated memory.
-     */
-     
-    p = malloc(size);
-    
-    if (p == NULL) {
-        return NULL;
-    }
-
-    if (size < numbytes) {
-        numbytes = size;
-    }
-
-    memcpy(p, ptr, numbytes);
-    
-    free(ptr);
-
-    return p;
 }
 
 void my_mallinfo() {

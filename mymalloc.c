@@ -121,16 +121,14 @@ int main(int argc, char *argv[])
 	my_free(c[8]);
 
 
-	char *cp2 = my_malloc(16*1024*2);
+	char *cp2 = my_malloc(16*1024*2) - 16;
 	
+	/** DEBUG*/
 	for(i=0; i<32;i++) {
 		printf("%i:%p",i,c[i]);
-		printf("\t%p",cp2);
-		if (cp2 == c[i]){
-			printf("<--");
-		}
+		printf("\tOffset:%i",cp2-c[i]);
 		printf("\n");
-	}
+	}//*/
 	
 	if (cp2 == c[8] || cp2 == c[9])
 	  puts("\t\t\t\t Passed");
@@ -151,6 +149,12 @@ int main(int argc, char *argv[])
 	else
 	  puts("\t\t\t\t Failed");
 
+	/** DEBUG*/
+	for(i=0; i<32;i++) {
+		printf("%i:%p",i,c[i]);
+		printf("\tOffset:%i",cp3-c[i]);
+		printf("\n");
+	}//*/
 	puts("Print some information..");
 	my_mallinfo();
 

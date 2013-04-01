@@ -9,9 +9,10 @@ void * malloc_first(size_t nbytes) {
     unsigned nunits;
 
     nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
+   
+    // Creates the freelist if it does not exist
     if ((prevp = freep) == NULL) {
 		
-		// no free list exist
         base.s.ptr = freep = prevp = &base;
         base.s.size = 0;
     }
@@ -29,20 +30,20 @@ void * malloc_first(size_t nbytes) {
             }
             else {
                 // Allocates tail end
-                p->s.size -= nunits;
-                p += p->s.size;
-                p->s.size = nunits;
+                p->s.size   -= nunits;
+                p           += p->s.size;
+                p->s.size    = nunits;
             }
             freep = prevp;
             
             // returns Data part of block to user
-            return (void *)(p+1); 
+            return (void *)(p + 1); 
         }
         
         // Wrapped around free list
         if (p == freep) {
 			
-			// Nothing left in the list
+			// Checks if there is still some place in memory
             if ((p = morecore(nunits)) == NULL) {
                 return NULL;
 			}
