@@ -1,5 +1,3 @@
-#include "header.h"
-//#include "brk.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +13,8 @@ static Header base;
 static Header * freep = NULL;
 static int current_policy = BEST_FIT;
 
-// Import the different strategies.
+// Import the different structures and strategies.
+#include "header.h"
 #include "first.h"
 #include "best.h"
 
@@ -128,5 +127,10 @@ void my_free(void * ap) {
 }
 
 void my_mallinfo() {
-	
+    
+    Header * h;
+
+    for(h = &base; h->s.size != NULL; h = &(h->s)) {
+
+    }	
 }

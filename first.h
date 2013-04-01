@@ -5,15 +5,17 @@
 void * malloc_first(size_t nbytes) {
 	
     Header * p, * prevp;
-    Header * morecore(unsigned);
-    unsigned nunits;
+    size_t nunits;
 
     nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
    
+    prevp = freep;
     // Creates the freelist if it does not exist
-    if ((prevp = freep) == NULL) {
+    if (prevp == NULL) {
 		
-        base.s.ptr = freep = prevp = &base;
+        base.s.ptr  = &base;
+        freep       = &base;
+        prevp       = &base;
         base.s.size = 0;
     }
 
@@ -37,7 +39,7 @@ void * malloc_first(size_t nbytes) {
             freep = prevp;
             
             // returns Data part of block to user
-            return (void *)(p + 1); 
+            return p + 1; 
         }
         
         // Wrapped around free list
