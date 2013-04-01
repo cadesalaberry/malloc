@@ -14,12 +14,20 @@
  * =====================================================================================
  */
 /* Includes */
-#include <unistd.h>
+#include<unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 // Uncomment the following line -- this should be your header file
 #include "mymalloc.h"	
+
+// We assume you have defined the following two definitions
+// If so, you should remove these..
+// If not, move them to your mymalloc.h file
+#define FIRST_FIT                         1
+#define BEST_FIT                          2
+
+
 
 // Comment out the following 4 lines
 //#define my_malloc(X)                      malloc(X)
@@ -113,14 +121,16 @@ int main(int argc, char *argv[])
 	my_free(c[8]);
 
 
-	char *cp2 = my_malloc(16*1024*2) - 16;
+	char *cp2 = my_malloc(16*1024*2);
 	
-	/** DEBUG*/
 	for(i=0; i<32;i++) {
 		printf("%i:%p",i,c[i]);
-		printf("\tOffset:%i",cp2-c[i]);
+		printf("\t%p",cp2);
+		if (cp2 == c[i]){
+			printf("<--");
+		}
 		printf("\n");
-	}//*/
+	}
 	
 	if (cp2 == c[8] || cp2 == c[9])
 	  puts("\t\t\t\t Passed");
@@ -141,12 +151,6 @@ int main(int argc, char *argv[])
 	else
 	  puts("\t\t\t\t Failed");
 
-	/** DEBUG*/
-	for(i=0; i<32;i++) {
-		printf("%i:%p",i,c[i]);
-		printf("\tOffset:%i",cp3-c[i]);
-		printf("\n");
-	}//*/
 	puts("Print some information..");
 	my_mallinfo();
 

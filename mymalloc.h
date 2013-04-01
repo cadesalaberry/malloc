@@ -1,20 +1,17 @@
+#include "header.h"
+//#include "brk.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-// We assume you have defined the following two definitions
-// If so, you should remove these..
-// If not, move them to your mymalloc.h file
-#define FIRST_FIT                         1
-#define BEST_FIT                          2
-
 static Header base;
-static Header * freep = NULL;
-static int current_policy = BEST_FIT;
 
-// Import the different structures and strategies.
-#include "header.h"
+static Header * freep = NULL;
+
+static int current_policy = 1;
+
+// Import the different strategies.
 #include "first.h"
 #include "best.h"
 
@@ -22,7 +19,11 @@ void * my_malloc(size_t nbytes);
 void my_free(void * ptr);
 void my_mallopt(int	policy);
 void my_free(void * ap);
+void * realloc(void * ptr, size_t size);
 void my_mallinfo();
+
+
+
 
 /**
  * Gets the address of the start of the allocated memory.
@@ -34,18 +35,22 @@ void * my_malloc(size_t nbytes) {
         return NULL;
     }
 
-    void * toReturn;
+    void * to_return;
 
-	if (current_policy == FIRST_FIT) {
-		toReturn = malloc_first(nbytes);
+	if (current_policy == 1) {
+		to_return = malloc_first(nbytes);
 	
-	} else if (current_policy == BEST_FIT) {
-		toReturn = malloc_best(nbytes);
+	} else if (current_policy == 2) {
+		to_return = malloc_best(nbytes);
+	
 	}
 
-    if (toReturn == NULL) {
+    if (to_return == NULL) {
         extern char * my_malloc_error;
+        exit(1);
     }
+    
+    return to_return;
 }
 
 void my_mallopt(int	policy) {
@@ -103,12 +108,13 @@ void my_free(void * ap) {
     // Points to block header
     for (p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr) {
         if (p >= p->s.ptr && (bp > p || bp < p->s.ptr)) {
-            break;
+            break; /* freed block at start or end of arena */
 		}
 	}
 
+
     if (bp + bp->s.size == p->s.ptr) {
-        // joins to upper block
+        // joins to upper nbr
         bp->s.size += p->s.ptr->s.size;
         bp->s.ptr = p->s.ptr->s.ptr;
     } else {
@@ -116,7 +122,7 @@ void my_free(void * ap) {
 	}
 	
     if (p + p->s.size == bp) {
-        // joins to lower block
+        // joins to lower nbr
         p->s.size += bp->s.size;
         p->s.ptr = bp->s.ptr;
     } else {
@@ -127,10 +133,5 @@ void my_free(void * ap) {
 }
 
 void my_mallinfo() {
-    
-    Header * h;
-
-    for(h = &base; h->s.size != NULL; h = &(h->s)) {
-
-    }	
+	
 }

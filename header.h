@@ -3,14 +3,16 @@
 // To align to long boundary
 typedef long Align;
 
-union header {						// Block header
+union header {
+    // Block header
     struct {
 		
         union header * ptr;			// Next block if on free list
-        size_t size;				// Size of the block
+        unsigned size;				// Size of the block
 	} s;
 	
-	Align x;						// Forces alignment of blocks
+    // forces alignment of blocks
+	Align x;
 };
 typedef union header Header;
 

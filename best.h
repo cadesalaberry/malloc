@@ -1,27 +1,37 @@
-#define INT_MAX 32767
+/* best fit malloc
+ *
+ * This module contains the function that implements the Best fit malloc
+ * strategy, malloc_best().
+ *
+ */
+
+#include <limits.h>
+
+
 /**
- * looks for the smallest free block sufficiently large
- * to store nbytes and returns its adress.
+ * Gets the start address of the newly allocated memory.
+ * Uses the Best fit algorithm, looking for the smallest free
+ * block sufficiently large.
+ *
  */
 void * malloc_best(size_t nbytes) {
 
     Header * p, * prevp;
     Header * morecore(unsigned);
     unsigned nunits, min_size = INT_MAX;
-    Header * minp = NULL, * minprevp = NULL;
+    Header *minp = NULL, *minprevp = NULL;
 
     nunits = (nbytes + sizeof(Header) - 1) / sizeof(Header) + 1;
     
-    // Creates the freelist if it does not exist
+    // Creates the list if it does not exist
     if ((prevp = freep) == NULL) {
-    
         base.s.ptr = freep = prevp = &base;
         base.s.size = 0;
     }
 
 
 	// Looks for the smallest block that is large enough to hold nbytes of data.
-    for (p = prevp->s.ptr; /*No end condition*/; prevp = p, p = p->s.ptr) {
+    for (p = prevp->s.ptr; ; prevp = p, p = p->s.ptr) {
         
         // Checks if it is big enough 
         if (p->s.size >= nunits) {
@@ -29,34 +39,33 @@ void * malloc_best(size_t nbytes) {
 			// If it is exactly the same size, just swap
             if (p->s.size == nunits) {
 				
-                prevp->s.ptr    = p->s.ptr;
-                freep           = prevp;
+                prevp->s.ptr = p->s.ptr;
+                freep = prevp;
                 
-                return (void *) (p + 1);
+                return (void *)(p + 1);
 			
 			} else {
 				
-                // Records the smallest block for now
                 if (minp == NULL || p->s.size < min_size) {
-
-                    minp        = p;
-                    minprevp    = prevp;
-                    min_size    = minp->s.size;
+                    
+                    minp = p;
+                    minprevp = prevp;
+                    min_size = minp->s.size;
                 }
             }
         }
 		
-		// Wrapped around free list
+		// wrapped around free list
         if (p == freep) {
             
             if (minp != NULL) {
 				
                 // Fills in the tail end
-                minp->s.size    -= nunits;
-                minp            += minp->s.size;
-                minp->s.size     = nunits;
+                minp->s.size -= nunits;
+                minp += minp->s.size;
+                minp->s.size = nunits;
                 
-                freep            = minprevp;
+                freep = minprevp;
                 
                 return (void *)(minp + 1);
             }

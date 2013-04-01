@@ -1,3 +1,4 @@
-gcc -o mymalloc mymalloc.c
-./mymalloc
-rm mymalloc
+P=mymalloc
+gcc -o $P $P.c
+./$P
+rm $P
