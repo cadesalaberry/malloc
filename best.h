@@ -1,18 +1,7 @@
-/* best fit malloc
- *
- * This module contains the function that implements the Best fit malloc
- * strategy, malloc_best().
- *
- */
-
-#include <limits.h>
-
-
+#define INT_MAX 32767
 /**
- * Gets the start address of the newly allocated memory.
- * Uses the Best fit algorithm, looking for the smallest free
- * block sufficiently large.
- *
+ * looks for the smallest free block sufficiently large
+ * to store nbytes and returns its adress.
  */
 void * malloc_best(size_t nbytes) {
 
@@ -25,6 +14,7 @@ void * malloc_best(size_t nbytes) {
     
     // Creates the freelist if it does not exist
     if ((prevp = freep) == NULL) {
+    
         base.s.ptr = freep = prevp = &base;
         base.s.size = 0;
     }
@@ -46,6 +36,7 @@ void * malloc_best(size_t nbytes) {
 			
 			} else {
 				
+                // Records the smallest block for now
                 if (minp == NULL || p->s.size < min_size) {
 
                     minp        = p;

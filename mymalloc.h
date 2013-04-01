@@ -5,13 +5,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define FIRST_FIT   1
-#define BEST_FIT    2
+// We assume you have defined the following two definitions
+// If so, you should remove these..
+// If not, move them to your mymalloc.h file
+#define FIRST_FIT                         1
+#define BEST_FIT                          2
+
 static Header base;
-
 static Header * freep = NULL;
-
-static int current_policy = 1;
+static int current_policy = BEST_FIT;
 
 // Import the different strategies.
 #include "first.h"
@@ -23,9 +25,6 @@ void my_mallopt(int	policy);
 void my_free(void * ap);
 void my_mallinfo();
 
-
-
-
 /**
  * Gets the address of the start of the allocated memory.
  * choses the method according to the policy specified.
@@ -36,15 +35,18 @@ void * my_malloc(size_t nbytes) {
         return NULL;
     }
 
+    void * toReturn;
+
 	if (current_policy == FIRST_FIT) {
-		return malloc_first(nbytes);
+		toReturn = malloc_first(nbytes);
 	
 	} else if (current_policy == BEST_FIT) {
-		return malloc_best(nbytes);
-	
-	} else {
-		exit(1);
+		toReturn = malloc_best(nbytes);
 	}
+
+    if (toReturn == NULL) {
+        extern char * my_malloc_error;
+    }
 }
 
 void my_mallopt(int	policy) {
@@ -102,13 +104,12 @@ void my_free(void * ap) {
     // Points to block header
     for (p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr) {
         if (p >= p->s.ptr && (bp > p || bp < p->s.ptr)) {
-            break; /* freed block at start or end of arena */
+            break;
 		}
 	}
 
-
     if (bp + bp->s.size == p->s.ptr) {
-        // joins to upper nbr
+        // joins to upper block
         bp->s.size += p->s.ptr->s.size;
         bp->s.ptr = p->s.ptr->s.ptr;
     } else {
@@ -116,7 +117,7 @@ void my_free(void * ap) {
 	}
 	
     if (p + p->s.size == bp) {
-        // joins to lower nbr
+        // joins to lower block
         p->s.size += bp->s.size;
         p->s.ptr = bp->s.ptr;
     } else {

@@ -21,14 +21,6 @@
 // Uncomment the following line -- this should be your header file
 #include "mymalloc.h"	
 
-// We assume you have defined the following two definitions
-// If so, you should remove these..
-// If not, move them to your mymalloc.h file
-#define FIRST_FIT                         1
-#define BEST_FIT                          2
-
-
-
 // Comment out the following 4 lines
 //#define my_malloc(X)                      malloc(X)
 //#define my_free(X)                        free(X)
