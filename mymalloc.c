@@ -21,14 +21,6 @@
 // Uncomment the following line -- this should be your header file
 #include "mymalloc.h"	
 
-// We assume you have defined the following two definitions
-// If so, you should remove these..
-// If not, move them to your mymalloc.h file
-#define FIRST_FIT                         1
-#define BEST_FIT                          2
-
-
-
 // Comment out the following 4 lines
 //#define my_malloc(X)                      malloc(X)
 //#define my_free(X)                        free(X)
@@ -123,12 +115,17 @@ int main(int argc, char *argv[])
 
 	char *cp2 = my_malloc(16*1024*2);
 	
+	//DEBUG
 	for(i=0; i<32;i++) {
 		printf("%i:%p",i,c[i]);
-		printf("\t%p",cp2);
-		if (cp2 == c[i]){
+		printf("\t");
+		if (cp2 < c[i]) {
+			printf("^");
+		} else if (cp2 == c[i]){
 			printf("<--");
-		}
+		} else if (cp2 > c[i]){
+			printf("v");
+		} 
 		printf("\n");
 	}
 	
@@ -145,6 +142,20 @@ int main(int argc, char *argv[])
 	my_mallopt(BEST_FIT);	
 
 	char *cp3 = my_malloc(16*1024*2);
+
+	//DEBUG
+	for(i=0; i<32;i++) {
+		printf("%i:%p",i,c[i]);
+		printf("\t");
+		if (cp3 < c[i]) {
+			printf("^");
+		} else if (cp3 == c[i]){
+			printf("<--");
+		} else if (cp3 > c[i]){
+			printf("v");
+		} 
+		printf("\n");
+	}
 
 	if (cp3 == c[19])
 	  puts("\t\t\t\t Passed");

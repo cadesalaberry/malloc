@@ -8,7 +8,7 @@ union header {
     struct {
 		
         union header * ptr;			// Next block if on free list
-        unsigned size;				// Size of the block
+        size_t size;				// Size of the block
 	} s;
 	
     // forces alignment of blocks
@@ -16,10 +16,7 @@ union header {
 };
 typedef union header Header;
 
-void * malloc(size_t size);
-
-void free(void * ptr);
-
-void * realloc(void * ptr, size_t size);
-
 static Header * morecore(unsigned nu);
+static Header base;
+static Header * freep = NULL;
+

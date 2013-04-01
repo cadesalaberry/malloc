@@ -5,9 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static Header base;
 
-static Header * freep = NULL;
 
 static int current_policy = 1;
 
@@ -15,15 +13,18 @@ static int current_policy = 1;
 #include "first.h"
 #include "best.h"
 
+// We assume you have defined the following two definitions
+// If so, you should remove these..
+// If not, move them to your mymalloc.h file
+#define FIRST_FIT                         1
+#define BEST_FIT                          2
+
 void * my_malloc(size_t nbytes);
 void my_free(void * ptr);
 void my_mallopt(int	policy);
 void my_free(void * ap);
 void * realloc(void * ptr, size_t size);
 void my_mallinfo();
-
-
-
 
 /**
  * Gets the address of the start of the allocated memory.
@@ -57,32 +58,6 @@ void my_mallopt(int	policy) {
 	
 	current_policy = policy;
 	
-}
-
-/**
- * gets more memory from the system and returns pointer to it.
- */
-static Header * morecore(unsigned nu) {
-
-    char * cp;
-    Header * up;
-    
-    if (nu < NALLOC) {
-        nu = NALLOC;
-	}
-    cp = sbrk(nu * sizeof(Header));
-	
-	// Checks if there is no space at all
-    if (cp == (char *) - 1) {
-        return NULL;
-	}
-	
-    up = (Header *) cp;
-    up->s.size = nu;
-    
-    my_free((void *) (up + 1));
-    
-    return freep;
 }
 
 /**
@@ -134,4 +109,30 @@ void my_free(void * ap) {
 
 void my_mallinfo() {
 	
+}
+
+/**
+ * gets more memory from the system and returns pointer to it.
+ */
+static Header * morecore(unsigned nu) {
+
+    char * cp;
+    Header * up;
+    
+    if (nu < NALLOC) {
+        nu = NALLOC;
+    }
+    cp = sbrk(nu * sizeof(Header));
+    
+    // Checks if there is no space at all
+    if (cp == (char *) - 1) {
+        return NULL;
+    }
+    
+    up = (Header *) cp;
+    up->s.size = nu;
+    
+    my_free((void *) (up + 1));
+    
+    return freep;
 }
