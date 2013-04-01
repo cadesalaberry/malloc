@@ -12,26 +12,26 @@ void * malloc_first(size_t nbytes) {
     if ((prevp = freep) == NULL) {
 		
 		// no free list exist
-        base.s.ptr = freep = prevp = &base;
-        base.s.size = 0;
+        base.h.nxt = freep = prevp = &base;
+        base.h.size = 0;
     }
 
 
     // Gets a block large enough to hold nbytes of data.
-    for (p = prevp->s.ptr; ; prevp = p, p = p->s.ptr) {
+    for (p = prevp->h.nxt; ; prevp = p, p = p->h.nxt) {
 		
 		// Checks if it is big enough
-        if (p->s.size >= nunits) {
+        if (p->h.size >= nunits) {
 			
 			// Checks if it is the same size
-            if (p->s.size == nunits) {
-                prevp->s.ptr = p->s.ptr;
+            if (p->h.size == nunits) {
+                prevp->h.nxt = p->h.nxt;
             }
             else {
                 // Allocates tail end
-                p->s.size -= nunits;
-                p += p->s.size;
-                p->s.size = nunits;
+                p->h.size -= nunits;
+                p += p->h.size;
+                p->h.size = nunits;
             }
             freep = prevp;
             

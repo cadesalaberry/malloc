@@ -1,5 +1,4 @@
 #include "header.h"
-//#include "brk.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,12 +18,10 @@ static int current_policy = 1;
 #define FIRST_FIT                         1
 #define BEST_FIT                          2
 
-void * my_malloc(size_t nbytes);
-void my_free(void * ptr);
-void my_mallopt(int	policy);
-void my_free(void * ap);
-void * realloc(void * ptr, size_t size);
-void my_mallinfo();
+void *  my_malloc   (size_t nbytes);
+void    my_free     (void * data_pointer);
+void    my_mallopt  (int	policy);
+void    my_mallinfo ();
 
 /**
  * Gets the address of the start of the allocated memory.
@@ -63,45 +60,43 @@ void my_mallopt(int	policy) {
 /**
  * Releases the block and put it in the free list.
  */
-void my_free(void * ap) {
+void my_free(void * data_pointer) {
 
-    if (ap == NULL) {
+    if (data_pointer == NULL) {
         return;
     }
 
-    Header * bp, * p;
-    bp = (Header *) ap - 1;
+    Header * tofree, * p;
+    
+    // Gets the header of the given data pointer
+    tofree = (Header *) data_pointer - 1;
 
-    if (bp->s.size <= 0) {
+    if (tofree->h.size <= 0) {
         return;
     }
 
-    /*
-     * Merges the freed block with adjacent free memory.
-     */
-
-    // Points to block header
-    for (p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr) {
-        if (p >= p->s.ptr && (bp > p || bp < p->s.ptr)) {
-            break; /* freed block at start or end of arena */
+    // Looks for the closest free header
+    for (p = freep; !(tofree > p && tofree < p->h.nxt); p = p->h.nxt) {
+        if (p >= p->h.nxt && (tofree > p || tofree < p->h.nxt)) {
+            break;
 		}
 	}
 
 
-    if (bp + bp->s.size == p->s.ptr) {
-        // joins to upper nbr
-        bp->s.size += p->s.ptr->s.size;
-        bp->s.ptr = p->s.ptr->s.ptr;
+    if (tofree + tofree->h.size == p->h.nxt) {
+        // joins to upper block
+        tofree->h.size += p->h.nxt->h.size;
+        tofree->h.nxt = p->h.nxt->h.nxt;
     } else {
-        bp->s.ptr = p->s.ptr;
+        tofree->h.nxt = p->h.nxt;
 	}
 	
-    if (p + p->s.size == bp) {
-        // joins to lower nbr
-        p->s.size += bp->s.size;
-        p->s.ptr = bp->s.ptr;
+    if (p + p->h.size == tofree) {
+        // joins to lower block
+        p->h.size += tofree->h.size;
+        p->h.nxt = tofree->h.nxt;
     } else {
-        p->s.ptr = bp;
+        p->h.nxt = tofree;
 	}
 	
     freep = p;
@@ -114,7 +109,7 @@ void my_mallinfo() {
 /**
  * gets more memory from the system and returns pointer to it.
  */
-static Header * morecore(unsigned nu) {
+static Header * morecore(unsigned int nu) {
 
     char * cp;
     Header * up;
@@ -130,7 +125,7 @@ static Header * morecore(unsigned nu) {
     }
     
     up = (Header *) cp;
-    up->s.size = nu;
+    up->h.size = nu;
     
     my_free((void *) (up + 1));
     
