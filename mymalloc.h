@@ -14,12 +14,12 @@
 #define FIRST_FIT                   1
 #define BEST_FIT                    2
 
-static int current_policy = BEST_FIT;
+static int current_policy = FIRST_FIT;
 char * my_malloc_error;
 
-void *  my_malloc   (size_t nbytes);
-void    my_free     (void * data_pointer);
-void    my_mallopt  (int	policy);
+void *  my_malloc   (size_t   nbytes);
+void    my_free     (void   * data_pointer);
+void    my_mallopt  (int	  policy);
 void    dissolve    (Header * to_dis);
 void    my_mallinfo ();
 
@@ -66,10 +66,8 @@ void my_mallopt(int	policy) {
         return;
     }
 
-    Header * tofree, * p;
-    
     // Gets the header of the given data pointer
-    tofree = (Header *) data_pointer - 1;
+    Header * tofree = (Header *) data_pointer - 1;
 
     if (tofree->h.size <= 0) {
         return;
@@ -110,6 +108,12 @@ void dissolve(Header * to_dis) {
     }
 
     freep = p;
+
+    // Checks if the last block is greater than 128kb
+    if (freep->h.size <= 131072 && freep->h.nxt == &base) {
+        freep->h.size = 131072;
+        brk(freep + 131072);
+    }
 }
 void my_mallinfo() {
 	
@@ -132,15 +136,15 @@ void my_mallinfo() {
 /**
  * gets more memory from the system and returns pointer to it.
  */
- static Header * morecore(unsigned int nu) {
+ static Header * more_mem(size_t asked) {
 
     char * cp;
     Header * up;
     
-    if (nu < NALLOC) {
-        nu = NALLOC;
+    if (asked < NALLOC) {
+        asked = NALLOC;
     }
-    cp = sbrk(nu * sizeof(Header));
+    cp = sbrk(asked * sizeof(Header));
     
     // Checks if there is no space at all
     if (cp == (char *) - 1) {
@@ -148,7 +152,7 @@ void my_mallinfo() {
     }
     
     up = (Header *) cp;
-    up->h.size = nu;
+    up->h.size = asked;
     
     my_free((void *) (up + 1));
     

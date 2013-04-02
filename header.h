@@ -1,4 +1,5 @@
 #define NALLOC 1024
+#define FIX sizeof(long)*2
 
 union header {					    // Block header
 	struct {
@@ -9,7 +10,7 @@ union header {					    // Block header
 };
 typedef union header Header;
 
-static Header * morecore(unsigned int nu);
+static Header * more_mem(size_t nu);
 static Header 	base;
 static Header * freep = NULL;
 

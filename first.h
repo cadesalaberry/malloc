@@ -3,7 +3,7 @@
  * Gets the first free memory that is large enough.
  */
  void * malloc_first(size_t nbytes) {
-   
+
     Header * p, * prevp;
     size_t nunits;
 
@@ -21,10 +21,10 @@
 
     // Gets a block large enough to hold nbytes of data.
     for (p = prevp->h.nxt; ; prevp = p, p = p->h.nxt) {
-      
+
 		// Checks if it is big enough
         if (p->h.size >= nunits) {
-         
+
 			// Checks if it is the same size
             if (p->h.size == nunits) {
                 prevp->h.nxt = p->h.nxt;
@@ -42,11 +42,11 @@
             return p + 1; 
         }
         
-        // Wrapped around free list
+        // Checks if we reached the end of the list
         if (p == freep) {
-         
+
 			// Gets another free header
-            if ((p = morecore(nunits)) == NULL) {
+            if ((p = more_mem(nunits)) == NULL) {
                 // No space left in memory.
                 return NULL;
             }

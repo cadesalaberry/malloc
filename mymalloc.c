@@ -61,21 +61,6 @@ int main(int argc, char *argv[])
 	// Allocate some storage .. this should go into the freed storage
 	ct = (char * ) my_malloc(5 * 1024);
 
-	/**DEBUG
-	for(i=0; i<32;i++) {
-		printf("%i:%p",i,c[i]);
-		printf("\t");
-		if (ct < c[i]) {
-			printf("^");
-		} else if (ct == c[i]){
-			printf("<--");
-		} else if (ct > c[i]){
-			printf("v");
-		}
-		printf("\t%p",ct);
-		printf("\n");
-	}//*/
-
 	// First test, are you finding the available holes.
 	if(ct < c[31])						
 		puts("\t\t\t\t Passed\n");
@@ -128,21 +113,7 @@ int main(int argc, char *argv[])
 	my_free(c[8]);
 
 
-	char *cp2 = my_malloc(16*1024*2) - 8;
-	
-	/**DEBUG
-	for(i=0; i<32;i++) {
-		printf("%i:%p",i,c[i]);
-		printf("\t");
-		if (cp2 < c[i]) {
-			printf("^");
-		} else if (cp2 == c[i]){
-			printf("<--");
-		} else if (cp2 > c[i]){
-			printf("v");
-		} 
-		printf("\n");
-	}//*/
+	char *cp2 = my_malloc(16*1024*2)-FIX;
 	
 	if (cp2 == c[8] || cp2 == c[9])
 	  puts("\t\t\t\t Passed");
@@ -150,27 +121,13 @@ int main(int argc, char *argv[])
 	  puts("\t\t\t\t Failed");
 
 	
-	my_free(cp2+8);
+	my_free(cp2+FIX);
 	// Now try the other method...
 
 	puts("Check for best first algorithm.... ");
 	my_mallopt(BEST_FIT);	
 
-	char *cp3 = my_malloc(16*1024*2) - 8;
-
-	/**DEBUG
-	for(i=0; i<32;i++) {
-		printf("%i:%p",i,c[i]);
-		printf("\t");
-		if (cp3 < c[i]) {
-			printf("^");
-		} else if (cp3 == c[i]){
-			printf("<--");
-		} else if (cp3 > c[i]){
-			printf("v");
-		} 
-		printf("\n");
-	}//*/
+	char *cp3 = my_malloc(16*1024*2)-FIX;
 
 	if (cp3 == c[19])
 	  puts("\t\t\t\t Passed");

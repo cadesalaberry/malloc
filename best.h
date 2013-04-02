@@ -64,8 +64,8 @@
                 return minp + 1;
             }
             
-			// Gets another free header
-            if ((p = morecore(nunits)) == NULL) {
+			 // Checks if we reached the end of the list
+            if ((p = more_mem(nunits)) == NULL) {
                 // No space left in memory.
                 return NULL;
             }
