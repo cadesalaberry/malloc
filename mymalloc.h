@@ -78,6 +78,9 @@ void my_mallopt(int	policy) {
     dissolve(tofree);
 }
 
+/**
+ * Merges the block with the closest free blocks.
+ */
 void dissolve(Header * to_dis) {
 
     Header * p;
