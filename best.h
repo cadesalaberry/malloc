@@ -3,7 +3,7 @@
  * Uses the Best fit algorithm, looking for the smallest free
  * block sufficiently large.
  */
-void * malloc_best(size_t nbytes) {
+ void * malloc_best(size_t nbytes) {
 
     Header * p, * prevp;
     size_t nunits, min_size = INT_MAX;
@@ -26,19 +26,19 @@ void * malloc_best(size_t nbytes) {
         
         // Checks if it is big enough 
         if (p->h.size >= nunits) {
-			
+         
 			// If it is exactly the same size, just swap
             if (p->h.size == nunits) {
-				
+                
                 prevp->h.nxt = p->h.nxt;
                 
                 freep = prevp;
                 
                 // returns data part to user
                 return p + 1;
-			
-			} else {
-				
+                
+            } else {
+                
                 if (minp == NULL || p->h.size < min_size) {
                     
                     minp = p;
@@ -47,12 +47,12 @@ void * malloc_best(size_t nbytes) {
                 }
             }
         }
-		
+        
 		// wrapped around free list
         if (p == freep) {
             
             if (minp != NULL) {
-				
+                
                 // Fills in the tail end
                 minp->h.size    -= nunits;
                 minp            += minp->h.size;

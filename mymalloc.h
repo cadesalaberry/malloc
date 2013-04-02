@@ -27,28 +27,28 @@ void    my_mallinfo ();
  * Gets the address of the start of the allocated memory.
  * choses the method according to the policy specified.
  */
-void * my_malloc(size_t nbytes) {
-	
+ void * my_malloc(size_t nbytes) {
+     
     if (nbytes == 0) {
         return NULL;
     }
 
     void * to_return;
 
-	if (current_policy == 1) {
-		to_return = malloc_first(nbytes);
-	
-	} else if (current_policy == 2) {
-		to_return = malloc_best(nbytes);
-	
-	}
+    if (current_policy == 1) {
+      to_return = malloc_first(nbytes);
+      
+  } else if (current_policy == 2) {
+      to_return = malloc_best(nbytes);
+      
+  }
 
-    if (to_return == NULL) {
-        extern char * my_malloc_error;
-        exit(1);
-    }
-    
-    return to_return;
+  if (to_return == NULL) {
+    extern char * my_malloc_error;
+    exit(1);
+}
+
+return to_return;
 }
 
 void my_mallopt(int	policy) {
@@ -60,7 +60,7 @@ void my_mallopt(int	policy) {
 /**
  * Releases the block and put it in the free list.
  */
-void my_free(void * data_pointer) {
+ void my_free(void * data_pointer) {
 
     if (data_pointer == NULL) {
         return;
@@ -79,8 +79,8 @@ void my_free(void * data_pointer) {
     for (p = freep; !(tofree > p && tofree < p->h.nxt); p = p->h.nxt) {
         if (p >= p->h.nxt && (tofree > p || tofree < p->h.nxt)) {
             break;
-		}
-	}
+        }
+    }
 
 
     if (tofree + tofree->h.size == p->h.nxt) {
@@ -89,16 +89,16 @@ void my_free(void * data_pointer) {
         tofree->h.nxt = p->h.nxt->h.nxt;
     } else {
         tofree->h.nxt = p->h.nxt;
-	}
-	
+    }
+    
     if (p + p->h.size == tofree) {
         // joins to lower block
         p->h.size += tofree->h.size;
         p->h.nxt = tofree->h.nxt;
     } else {
         p->h.nxt = tofree;
-	}
-	
+    }
+    
     freep = p;
 }
 
@@ -109,7 +109,7 @@ void my_mallinfo() {
 /**
  * gets more memory from the system and returns pointer to it.
  */
-static Header * morecore(unsigned int nu) {
+ static Header * morecore(unsigned int nu) {
 
     char * cp;
     Header * up;

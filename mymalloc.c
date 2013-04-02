@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 	my_free(c[8]);
 
 
-	char *cp2 = my_malloc(16*1024*2)-16;
+	char *cp2 = my_malloc(16*1024*2) - 8;
 	
 	/**DEBUG
 	for(i=0; i<32;i++) {
@@ -135,13 +135,13 @@ int main(int argc, char *argv[])
 	  puts("\t\t\t\t Failed");
 
 	
-	my_free(cp2+16);
+	my_free(cp2+8);
 	// Now try the other method...
 
 	puts("Check for best first algorithm.... ");
 	my_mallopt(BEST_FIT);	
 
-	char *cp3 = my_malloc(16*1024*2)-16;
+	char *cp3 = my_malloc(16*1024*2) - 8;
 
 	/**DEBUG
 	for(i=0; i<32;i++) {

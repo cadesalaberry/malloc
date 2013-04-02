@@ -1,11 +1,11 @@
 #define NALLOC 1024
 
 union header {					    // Block header
-    struct {
+	struct {
 		
         union header * nxt;			// Next block if on free list
         size_t size;				// Size of the block
-	} h;
+    } h;
 };
 typedef union header Header;
 
