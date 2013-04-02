@@ -61,6 +61,21 @@ int main(int argc, char *argv[])
 	// Allocate some storage .. this should go into the freed storage
 	ct = (char * ) my_malloc(5 * 1024);
 
+	/**DEBUG
+	for(i=0; i<32;i++) {
+		printf("%i:%p",i,c[i]);
+		printf("\t");
+		if (ct < c[i]) {
+			printf("^");
+		} else if (ct == c[i]){
+			printf("<--");
+		} else if (ct > c[i]){
+			printf("v");
+		}
+		printf("\t%p",ct);
+		printf("\n");
+	}//*/
+
 	// First test, are you finding the available holes.
 	if(ct < c[31])						
 		puts("\t\t\t\t Passed\n");
