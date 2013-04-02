@@ -5,14 +5,16 @@
 void * malloc_first(size_t nbytes) {
 	
     Header * p, * prevp;
-    Header * morecore(unsigned);
-    unsigned nunits;
+    size_t nunits;
 
     nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
+    
+    // Creates the list if it does not exist
     if ((prevp = freep) == NULL) {
-		
-		// no free list exist
-        base.h.nxt = freep = prevp = &base;
+
+        base.h.nxt  = &base;
+        freep       = &base;
+        prevp       = &base;
         base.h.size = 0;
     }
 
@@ -28,24 +30,26 @@ void * malloc_first(size_t nbytes) {
                 prevp->h.nxt = p->h.nxt;
             }
             else {
-                // Allocates tail end
-                p->h.size -= nunits;
-                p += p->h.size;
-                p->h.size = nunits;
+                // Fills in tail end
+                p->h.size   -= nunits;
+                p           += p->h.size;
+                p->h.size    = nunits;
             }
+
             freep = prevp;
             
-            // returns Data part of block to user
-            return (void *)(p+1); 
+            // returns data part of block to user
+            return p + 1; 
         }
         
         // Wrapped around free list
         if (p == freep) {
 			
-			// Nothing left in the list
+			// Gets another free header
             if ((p = morecore(nunits)) == NULL) {
+                // No space left in memory.
                 return NULL;
-			}
+            }
         }
     }
 }

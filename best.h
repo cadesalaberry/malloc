@@ -6,7 +6,6 @@
 void * malloc_best(size_t nbytes) {
 
     Header * p, * prevp;
-    Header * morecore(unsigned);
     size_t nunits, min_size = INT_MAX;
     Header *minp = NULL, *minprevp = NULL;
 
@@ -14,6 +13,7 @@ void * malloc_best(size_t nbytes) {
     
     // Creates the list if it does not exist
     if ((prevp = freep) == NULL) {
+
         base.h.nxt  = &base;
         freep       = &base;
         prevp       = &base;
@@ -31,9 +31,11 @@ void * malloc_best(size_t nbytes) {
             if (p->h.size == nunits) {
 				
                 prevp->h.nxt = p->h.nxt;
+                
                 freep = prevp;
                 
-                return (void *)(p + 1);
+                // returns data part to user
+                return p + 1;
 			
 			} else {
 				
@@ -52,17 +54,19 @@ void * malloc_best(size_t nbytes) {
             if (minp != NULL) {
 				
                 // Fills in the tail end
-                minp->h.size -= nunits;
-                minp += minp->h.size;
-                minp->h.size = nunits;
+                minp->h.size    -= nunits;
+                minp            += minp->h.size;
+                minp->h.size     = nunits;
                 
                 freep = minprevp;
                 
-                return (void *)(minp + 1);
+                // returns data part to user
+                return minp + 1;
             }
             
-			// Returns NULL if no space is left
+			// Gets another free header
             if ((p = morecore(nunits)) == NULL) {
+                // No space left in memory.
                 return NULL;
             }
         }
