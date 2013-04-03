@@ -35,16 +35,15 @@ void    my_mallinfo ();
 
     void * to_return;
 
-    if (current_policy == 1) {
-      to_return = malloc_first(nbytes);
+    if (current_policy == FIRST_FIT) {
+        to_return = malloc_first(nbytes);
 
-  } else if (current_policy == 2) {
-      to_return = malloc_best(nbytes);
-
-  }
+    } else if (current_policy == BEST_FIT) {
+        to_return = malloc_best(nbytes);
+    }
 
   if (to_return == NULL) {
-    
+
     exit(1);
 }
 
@@ -61,7 +60,7 @@ void my_mallopt(int	policy) {
  * Releases the block and put it in the free list.
  */
  void my_free(void * data_pointer) {
-    
+
     if (data_pointer == NULL) {
         return;
     }
@@ -79,7 +78,7 @@ void my_mallopt(int	policy) {
 /**
  * Merges the block with the closest free blocks.
  */
-void dissolve(Header * to_dis) {
+ void dissolve(Header * to_dis) {
 
     Header * p;
 
@@ -89,7 +88,6 @@ void dissolve(Header * to_dis) {
             break;
         }
     }
-
 
     if (to_dis + to_dis->h.size == p->h.nxt) {
         // joins to upper block

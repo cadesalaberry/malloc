@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 	my_free(c[8]);
 
 
-	char *cp2 = my_malloc(16*1024*2)-FIX;
+	char *cp2 = my_malloc(16*1024*2)-I;
 	
 	if (cp2 == c[8] || cp2 == c[9])
 	  puts("\t\t\t\t Passed");
@@ -121,14 +121,27 @@ int main(int argc, char *argv[])
 	  puts("\t\t\t\t Failed");
 
 	
-	my_free(cp2+FIX);
+	my_free(cp2+I);
 	// Now try the other method...
 
 	puts("Check for best first algorithm.... ");
 	my_mallopt(BEST_FIT);	
 
-	char *cp3 = my_malloc(16*1024*2)-FIX;
+	char *cp3 = my_malloc(16*1024*2)-I;
 
+	/**DEBUG
+	for(i=0; i<32;i++) {
+		printf("%i:%p",i,c[i]);
+		printf("\t");
+		if (cp3 < c[i]) {
+			printf("^");
+		} else if (cp3 == c[i]){
+			printf("<--");
+		} else if (cp3 > c[i]){
+			printf("v %p", cp3);
+		}
+		printf("\n");
+	}//*/
 	if (cp3 == c[19])
 	  puts("\t\t\t\t Passed");
 	else

@@ -1,5 +1,5 @@
 #define NALLOC 1024
-#define FIX sizeof(long)*2
+#define I sizeof(long)*2
 
 union header {					    // Block header
 	struct {

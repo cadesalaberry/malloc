@@ -7,6 +7,7 @@
     Header * p, * prevp;
     size_t nunits;
 
+    //nunits = nbytes + sizeof(Header);
     nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
     
     // Creates the list if it does not exist

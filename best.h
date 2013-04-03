@@ -9,6 +9,7 @@
     size_t nunits, min_size = INT_MAX;
     Header * minp = NULL, * minprevp = NULL;
 
+    //nunits = nbytes + sizeof(Header);
     nunits = (nbytes + sizeof(Header) - 1) / sizeof(Header) + 1;
     
     // Creates the list if it does not exist
